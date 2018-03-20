@@ -1,0 +1,28 @@
+{
+	"name": "Patostreamy.com Notifier",
+	"version": "1.2",
+	"manifest_version": 2,
+	"description":
+		"Śledź na żywo najpopularniejszych patostreamerów w Polsce. Już nigdy nie przegapisz żadnych dymów!",
+	"homepage_url": "http://patostreamy.com/",
+	"icons": {
+		"16": "icons/icon16.png",
+		"48": "icons/icon48.png",
+		"128": "icons/icon128.png"
+	},
+	"author": "Kamil @kamdz Dzwonkowski",
+	"background": {
+		"scripts": ["background.js"],
+		"persistent": true
+	},
+	"browser_action": {
+		"default_icon": "icons/icon19.png",
+		"default_title": "Patostreamy.com Notifier",
+		"default_popup": "popup.html"
+	},
+	"permissions": [
+		"storage",
+		"notifications",
+		"https://patostreamy.herokuapp.com/*"
+	]
+}
