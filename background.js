@@ -24,7 +24,7 @@ let channels = [];
 
     chrome.browserAction.setBadgeText({ text: badge });
     chrome.browserAction.setPopup({ popup: popup });
-    chrome.browserAction.setTitle({ title: names.length > 1 ? `Aktualnie nadają: ${names.join(", ")}` : `${names[0]} nadaje` });
+    chrome.browserAction.setTitle({ title: names.length > 1 ? `Aktualnie nadają: ${names.join(", ")}` : `${names[0] || 'Nikt aktualnie nie'} nadaje` });
 
     if (fresh.length) {
       chrome.storage.sync.get(['notifications'], function (result) {
