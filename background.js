@@ -12,7 +12,7 @@ var data = [];
 let channels = [];
 
 (function update() {
-  getJSON("https://patostreamy.herokuapp.com/api/channels", (response) => {
+  getJSON("https://patostreamy.com/api/channels", (response) => {
     const active = response.filter((channel) => channel.online);
     data = active.map(({ title, thumbnail, streamUrl, platform, viewers }) => ({ title, thumbnail, streamUrl, platform, viewers }));
     const names = active.map(({ title }) => title);
