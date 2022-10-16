@@ -1,24 +1,28 @@
 {
 	"name": "Patostreamy.com Notifier",
 	"version": "1.3.1",
-	"manifest_version": 2,
-	"description":
-		"Śledź na żywo najpopularniejszych patostreamerów w Polsce. Już nigdy nie przegapisz żadnych dymów!",
+	"manifest_version": 3,
+	"description": "Śledź na żywo najpopularniejszych patostreamerów w Polsce. Już nigdy nie przegapisz żadnych dymów!",
 	"homepage_url": "http://patostreamy.com/",
 	"icons": {
-		"16": "icons/icon16.png",
-		"48": "icons/icon48.png",
-		"128": "icons/icon128.png"
+		"16": "/icons/icon16.png",
+		"19": "/icons/icon19.png",
+		"48": "/icons/icon48.png",
+		"128": "/icons/icon128.png"
 	},
 	"author": "Kamil @kamdz Dzwonkowski",
 	"background": {
-		"scripts": ["background.js"],
-		"persistent": true
+		"service_worker": "background.js"
 	},
-	"browser_action": {
-		"default_icon": "icons/icon19.png",
+	"action": {
+		"default_popup": "popup.html",
 		"default_title": "Patostreamy.com Notifier",
-		"default_popup": "popup.html"
+		"default_icon": {
+			"16": "/icons/icon16.png",
+			"19": "/icons/icon19.png",
+			"48": "/icons/icon48.png",
+			"128": "/icons/icon128.png"
+		}
 	},
 	"permissions": [
 		"storage",
