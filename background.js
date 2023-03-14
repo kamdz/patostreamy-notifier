@@ -1,41 +1,52 @@
-var data = [];
-var channels = [];
+const formatBadge = channels =>
+  channels.length > 0 ? String(channels.length) : '';
+const formatTitle = channels =>
+  channels.length > 1
+    ? `Aktualnie nadają: ${channels.join(', ')}`
+    : `${channels[0] || 'Nikt aktualnie nie'} nadaje`;
+const formatNotification = channels =>
+  channels.length > 1
+    ? `${channels.join(', ')} rozpoczęli transmisje`
+    : `${channels[0]} zaczął transmisję`;
+
+const cache = { channelNames: [] };
 
 (async function update() {
-	const fetchUrl = await fetch('https://patostreamy.com/api/channels');
-	const response = await fetchUrl.json();
+  const fetchUrl = await fetch('https://patostreamy.com/api/channels');
+  const response = await fetchUrl.json();
+  const activeChannels = response.filter(channel => channel.online);
 
-	const active = response.filter((channel) => channel.online);
-	data = active.map(({ title, thumbnail, streamUrl, platform, viewers }) => ({ title, thumbnail, streamUrl, platform, viewers }));
-	const names = active.map(({ title }) => title);
-	const fresh = names.filter(name => !channels.includes(name));
+  chrome.storage.local
+    .set({ channels: JSON.stringify(activeChannels) })
+    .then(() => {
+      const activeChannelsNames = activeChannels.map(({ title }) => title);
 
-	const count = names.length;
-	const badge = count > 0 ? String(count) : "";
-	const popup = count > 0 ? "popup.html" : "";
+      chrome.action.setBadgeText({ text: formatBadge(activeChannelsNames) });
+      chrome.action.setPopup({
+        popup: activeChannelsNames.length > 0 ? 'popup.html' : ''
+      });
+      chrome.action.setTitle({
+        title: formatTitle(activeChannelsNames)
+      });
 
-	chrome.action.setBadgeText({ text: badge });
-	chrome.action.setPopup({ popup: popup });
-	chrome.action.setTitle({ title: names.length > 1 ? `Aktualnie nadają: ${names.join(", ")}` : `${names[0] || 'Nikt aktualnie nie'} nadaje` });
+      const newChannelNames = activeChannelsNames.filter(
+        name => !cache.channelNames.includes(name)
+      );
 
-	if (fresh.length) {
-		chrome.storage.sync.get(['notifications'], function (result) {
-			if (result.notifications) {
-				const text = fresh.length > 1 ? `${fresh.join(", ")} rozpoczęli transmisje` : `${fresh[0]} zaczął transmisję`;
-				const options = {
-					type: "basic",
-					title: "Patostreamy",
-					message: text,
-					iconUrl: "icons/icon128.png"
-				};
-				chrome.notifications.create('patostream', options);
-			}
-		});
-	}
-	channels = names;
+      if (newChannelNames.length) {
+        cache.channelNames = activeChannelsNames;
+        chrome.storage.sync.get(['notifications']).then(result => {
+          if (result.notifications) {
+            chrome.notifications.create('patostream', {
+              type: 'basic',
+              title: 'Patostreamy',
+              message: formatNotification(newChannelNames),
+              iconUrl: 'icons/icon128.png'
+            });
+          }
+        });
+      }
+    });
 
-	data = JSON.stringify(data);
-	chrome.storage.sync.set({data});
-
-	setTimeout(update, 60000);
+  setTimeout(update, 60000);
 })();
